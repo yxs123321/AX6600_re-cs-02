@@ -164,3 +164,14 @@ EOF
 
 # 赋予所有uci-defaults脚本执行权限
 chmod +x files/etc/uci-defaults/*
+
+# ========== 强制内核 6M → 12M（本项目仅 jdcloud_re-cs-02，不做机型判断）==========
+# Packages.sh 在 ./wrt/package/ 下执行，路径为 ../target/linux/...
+IPQ60XX_MK="../target/linux/qualcommax/image/ipq60xx.mk"
+if [ -f "$IPQ60XX_MK" ]; then
+	sed -i 's/KERNEL_SIZE := 6144k/KERNEL_SIZE := 12288k/g' "$IPQ60XX_MK"
+	echo "KERNEL_SIZE: forced 6144k -> 12288k in $IPQ60XX_MK"
+	grep -n "KERNEL_SIZE" "$IPQ60XX_MK" || true
+else
+	echo "警告：未找到 $IPQ60XX_MK，KERNEL_SIZE 未修改"
+fi
